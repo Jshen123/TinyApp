@@ -9,8 +9,10 @@
   "author": "Jshen123",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body-parser": "^1.16.1",
     "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-alpha.3",
     "ejs": "^2.5.5"
   }
 }

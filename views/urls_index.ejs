@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <title>TinyApp</title>
@@ -7,35 +7,36 @@
   <header>
   <% include ./partials/_header %>
   </header>
-  <table>
-    <tr>
-      <th>Long URL</th>
-      <th>Short URL</th>
-      <th>Edit </th>
-      <th>Delete </th>
-    </tr>
-    <% for (let url in urls) { %>
-    <tr>  
-      <td><%= urls[url] %></td>
-      <td><%= url %></td>
-      <td>
-      <form method = "POST", action = "/urls/<%= url %>">
-        <input type="submit" value="Edit">
-      </form>
-      </td>
-      <td>
-      <form method="POST" action="/urls/<%= url %>/delete">
-        <input type="submit" value="Delete">
-      </form>
-      </td>
-
-    </tr>
+    <% if (cookies) { %>
+      <table>
+        <tr>
+          <th>Long URL</th>
+          <th>Short URL</th>
+          <th>Edit </th>
+          <th>Delete </th>
+        </tr>
+        <% for (let url in urls) { %>
+        <tr>  
+          <td><%= urls[url].longURL %></td>
+          <td><%= url %></td>
+          <td>
+          <form method = "POST", action = "/urls/<%= url %>">
+            <input type="submit" value="Edit">
+          </form>
+          </td>
+          <td>
+          <form method="POST" action="/urls/<%= url %>/delete">
+            <input type="submit" value="Delete">
+          </form>
+          </td>
+        </tr>
+        <% } %>
+      </table>
+    <% } else {%>
     <% } %>
-  </table>
-
 </body>
 </html>
-
+ -->
 <!-- route: /days/:week/activities/:id
 
 			||||
