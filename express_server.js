@@ -6,7 +6,6 @@ const cookieSession = require('cookie-session')
 
 const bcrypt = require('bcrypt');
 
-//
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -51,7 +50,6 @@ app.post("/register", (req,res) => {
   if (!req.body.email || !req.body.password) {
     res.end("400").send("Email or password was incorrect.<a href='/register'> back to registration page </a>");
   }
-
   let randomString = generateRandomString();
   req.session.user_id = randomString
   
@@ -61,20 +59,9 @@ app.post("/register", (req,res) => {
     email: req.body.email,
     password: hashed
   };
-  // users.push(users[randomString]);
   filteredDB[req.session.user_id] = {};
-  console.log("empty ", filteredDB);
   res.redirect(`/`);
 });
-
-// app.get("/cookies", (req, res) => {
-//   let locals = {
-//     users: users,
-//     cookies : req.session.user_id
-//   };
-//   let test = users[locals.cookies].email;
-//   res.send(test)
-// });
 
 app.get("/login", (req,res) => {
   let locals = {
@@ -90,7 +77,6 @@ app.get("/login", (req,res) => {
 });
 
 app.post("/login", (req,res) => {
-  // res.cookie("user_id", req.body.username);
   let locals = {
     users: users,
     cookies : req.session.user_id
@@ -115,20 +101,6 @@ app.post("/logout", (req,res) => {
   req.session = null;
   res.redirect(`/`);
 });
-
-// app.get("/urls", (req, res) => {
-//   let locals = { 
-//     urls: urlDatabase,
-//     users: users,
-//     cookies : req.session.user_id  
-//   };
-//   if (req.session.user_id) {
-//     res.render("urls_index", locals);
-//     res.status("200");
-//   } else {
-//     res.status("401").send("Unauthorized Error");
-//   }
-// });
 
 app.get("/urls", (req, res) => {
   if (req.session.user_id){
@@ -159,21 +131,15 @@ app.post("/urls", (req, res) => {
     users: users,
     cookies : req.session.user_id  
   };
-
-  // let longURL = req.body.longURL; 
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {
     id: req.session.user_id,
     longURL: req.body.longURL
   };
-
   filteredDB[req.session.user_id][shortURL] = {
     id: req.session.user_id,
     longURL: req.body.longURL
   };
-  console.log("db ", urlDatabase);
-  console.log("filtered ",filteredDB);
-
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -190,19 +156,6 @@ app.get("/urls/new", (req, res) => {
   };
 });
 
-// app.post("/u/:id/update", (req,res) => {
-//   let locals = { 
-//     urls: filteredDB[req.session.user_id],
-//     users: users,
-//     cookies : req.session.user_id  
-//   };
-
-//   let shortURL = req.params.id;
-//   let longURL = req.body.longURL;
-//   filteredDB[shortURL].longURL = longURL;
-//   res.redirect(`/urls`);
-// });
-
 app.get("/u/:id", (req, res) => {
   let shortURL = req.params.id;
   if (urlDatabase[shortURL]) {
@@ -213,13 +166,6 @@ app.get("/u/:id", (req, res) => {
     res.status("404").send("Not Found");
   }
 });
-
-
-// app.post("/u/:id", (req,res) => {
-//   let shortURL = req.params.id;
-//   res.redirect(`/urls/${shortURL}`);
-// });
-
 
 app.get("/urls/:id", (req, res) => {
   if (!req.session.user_id) {
@@ -290,14 +236,6 @@ app.get("/", (req, res) => {
   }
   
 });
-
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
-
-// app.get("/hello", (req, res) => {
-//   res.end("<html><body>Hello <b>World</b></body></html>\n");
-// });
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
