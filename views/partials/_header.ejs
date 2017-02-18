@@ -1,16 +1,19 @@
   <header>TinyApp</header>
   <footer>
       <% if (cookies) { %>
-      
-          <form method = "POST", action = "/logout">
+        <%= users[cookies].email %>
+          <form method="GET" action="/urls">
+            <input type="submit" value="My Links">
+          </form>
+          <form method="POST" action="/logout">
             <input type="submit" value="Log Out">
           </form>
       <% } else {%>
-        <form method = "POST", action = "/register_redirect">
-          <input type="submit" value="Register">
-        </form>
-        <form method = "POST", action = "/login_redirect">
+        <form method="GET" action="/login">
           <input type="submit" value="Log In">
+        </form>
+        <form method="GET" action="/register">
+          <input type="submit" value="Register">
         </form>
       <% } %>
   </footer>

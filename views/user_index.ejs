@@ -12,7 +12,7 @@
         <tr>
           <th>Long URL</th>
           <th>Short URL</th>
-          <th>Edit </th>
+          <th>Update </th>
           <th>Delete </th>
         </tr>
         <% for (let url in urls) { %>
@@ -20,18 +20,21 @@
           <td><%= urls[url].longURL %></td>
           <td><%= url %></td>
           <td>
-          <form method = "POST", action = "/user/<%= url %>">
-            <input type="submit" value="Edit">
-          </form>
+            <form method = "POST", action = "/urls/<%= url%>">
+              <input type="submit" value="Update">
+            </form>
           </td>
           <td>
-          <form method="POST" action="/urls/<%= url %>/delete">
-            <input type="submit" value="Delete">
-          </form>
+            <form method="POST" action="/urls/<%= url %>/delete">
+              <input type="submit" value="Delete">
+            </form>
           </td>
         </tr>
         <% } %>
       </table>
+      <form method="GET" action ="/urls/new">
+        <input type="submit" value="Create a New Short Link">
+      </form>
     <% } else {%>
     <% } %>
 </body>

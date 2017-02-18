@@ -7,11 +7,19 @@
   <header>
   <% include ./partials/_header %>
   </header>
-  <%= shortURL %> - <%= longURL %>
-  <form method = "POST", action = "/urls/<%= shortURL %>/update">
-    <label for="longURL">Enter a URL:</label>
+  <% if (!cookies) { %>
+  <form method="POST", action="/login_redirect">
+    <input type="submit" value="Update">
+  <% } else { %> 
+  <% } %>
+  <%= shortURL %>
+  <form method="POST", action = "/urls/<%= shortURL %>/update">
+    <label for="longURL"><%= longURL %></label>
     <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
     <input type="submit" value="Update">
+  </form>
+    <form method="POST", action="/urls/<%= shortURL %>/delete">
+    <input type="submit" value="Delete">
   </form>
 </body>
 </html>
