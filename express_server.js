@@ -48,7 +48,7 @@ app.post("/register", (req,res) => {
     }
   }
   if (!req.body.email || !req.body.password) {
-    res.end("400").send("Email or password was incorrect.<a href='/register'> back to registration page </a>");
+    res.status("400").send("Email or password was incorrect.<a href='/register'> back to registration page </a>");
   }
   let randomString = generateRandomString();
   req.session.user_id = randomString
@@ -77,10 +77,6 @@ app.get("/login", (req,res) => {
 });
 
 app.post("/login", (req,res) => {
-  let locals = {
-    users: users,
-    cookies : req.session.user_id
-  };
   function authenticate () {
     for (user in users) {
       if (req.body.email === users[user].email && bcrypt.compareSync(req.body.password, users[user].password)) {
@@ -89,7 +85,6 @@ app.post("/login", (req,res) => {
     }
   }; 
   if (authenticate()){
-      // req.session.destroy();
       req.session.user_id = user;
       res.redirect(`/`);
   } else {
@@ -104,15 +99,15 @@ app.post("/logout", (req,res) => {
 
 app.get("/urls", (req, res) => {
   if (req.session.user_id){
-    filteredDB[req.session.user_id];
-    for (let url in urlDatabase) {
-      if (urlDatabase[url].id === req.session.user_id ){
-        filteredDB[req.session.user_id][url] = {
-            id: req.session.user_id,
-            longURL: urlDatabase[url].longURL
-        }
-      }
-    }  
+    // filteredDB[req.session.user_id];
+    // for (let url in urlDatabase) {
+    //   if (urlDatabase[url].id === req.session.user_id ){
+    //     filteredDB[req.session.user_id][url] = {
+    //         id: req.session.user_id,
+    //         longURL: urlDatabase[url].longURL
+    //     }
+    //   }
+    // }  
     let locals = { 
       urls: filteredDB[req.session.user_id],
       users: users,
@@ -126,26 +121,20 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  let locals = { 
-    urls: urlDatabase,
-    users: users,
-    cookies : req.session.user_id  
-  };
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {
     id: req.session.user_id,
-    longURL: req.body.longURL
+    longURL: convertPath(req.body.longURL)
   };
   filteredDB[req.session.user_id][shortURL] = {
     id: req.session.user_id,
-    longURL: req.body.longURL
+    longURL: convertPath(req.body.longURL)
   };
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/urls/new", (req, res) => {
   let locals = { 
-    urls: urlDatabase,
     users: users,
     cookies : req.session.user_id  
   };
@@ -160,7 +149,7 @@ app.get("/u/:id", (req, res) => {
   let shortURL = req.params.id;
   if (urlDatabase[shortURL]) {
     let longURL = urlDatabase[shortURL].longURL;
-    longURL = convertPath(longURL);
+    // longURL = convertPath(longURL);
     res.redirect(longURL)
   } else {
     res.status("404").send("Not Found");
@@ -180,12 +169,11 @@ app.get("/urls/:id", (req, res) => {
 
   if (!urlDatabase[shortURL]) {
     res.status("404").send("Not Found");
-  }
+  } else {
 
   let longURL = urlDatabase[shortURL].longURL;
 
   let locals = { 
-    urls: urlDatabase,
     users: users,
     cookies : req.session.user_id,
     shortURL: shortURL,
@@ -194,6 +182,7 @@ app.get("/urls/:id", (req, res) => {
   
   res.status("200");
   res.render("urls_show", locals);
+  }
   
 });
 
@@ -203,11 +192,6 @@ app.post("/urls/:id", (req,res) => {
 });
 
 app.post("/urls/:id/update", (req,res) => {
-  let locals = { 
-    urls: urlDatabase,
-    users: users,
-    cookies : req.session.user_id 
-  };
   let shortURL = req.params.id;
   let longURL = req.body.longURL;
   urlDatabase[shortURL].longURL = longURL;
@@ -215,12 +199,6 @@ app.post("/urls/:id/update", (req,res) => {
 })
 
 app.post("/urls/:id/delete", (req,res) => {
-  let locals = { 
-    urls: urlDatabase,
-    users: users,
-    cookies : req.session.user_id 
-  };
-
   let shortURL = req.params.id;
   delete urlDatabase[shortURL];
   delete filteredDB[req.session.user_id][shortURL];
@@ -234,13 +212,13 @@ app.get("/", (req, res) => {
   } else {
     res.redirect(`/login`);
   }
-  
 });
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
 
+// functions 
 function generateRandomString() {
   let randomString = "";
 	const randomChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -251,10 +229,11 @@ function generateRandomString() {
 }
 
 function convertPath(path) {
-  if (path[0,7] !== "https://") {
+  if (path.slice(0,7) === "http://") {
+    path = "https://" + path.slice(7,-1);
+    return path;
+  } else if (path.slice(0,8) !== "https://" ) {
     path = "https://" + path;
     return path;
-  } else {
-    return path
   }
 }
