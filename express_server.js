@@ -184,8 +184,10 @@ app.post("/urls/:id", (req,res) => {
 
 app.post("/urls/:id/update", (req,res) => {
   let shortURL = req.params.id;
-  let longURL = req.body.longURL;
+  let longURL = convertPath(req.body.longURL);
   urlDatabase[shortURL].longURL = longURL;
+  filteredDB[req.session.user_id][shortURL].longURL = longURL;
+  console.log(urlDatabase[shortURL].longURL)
   res.redirect(`/urls`);
 })
 
