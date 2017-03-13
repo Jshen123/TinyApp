@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 8080; // default port 8080
+const PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session')
 
@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
-  keys: ['key1', 'key2']
+  keys: ['session1', 'session2']
 }))
 
 app.set("view engine", "ejs");
@@ -98,16 +98,7 @@ app.post("/logout", (req,res) => {
 });
 
 app.get("/urls", (req, res) => {
-  if (req.session.user_id){
-    // filteredDB[req.session.user_id];
-    // for (let url in urlDatabase) {
-    //   if (urlDatabase[url].id === req.session.user_id ){
-    //     filteredDB[req.session.user_id][url] = {
-    //         id: req.session.user_id,
-    //         longURL: urlDatabase[url].longURL
-    //     }
-    //   }
-    // }  
+  if (req.session.user_id){ 
     let locals = { 
       urls: filteredDB[req.session.user_id],
       users: users,
@@ -149,7 +140,7 @@ app.get("/u/:id", (req, res) => {
   let shortURL = req.params.id;
   if (urlDatabase[shortURL]) {
     let longURL = urlDatabase[shortURL].longURL;
-    // longURL = convertPath(longURL);
+    longURL = convertPath(longURL);
     res.redirect(longURL)
   } else {
     res.status("404").send("Not Found");
@@ -228,12 +219,9 @@ function generateRandomString() {
 	return randomString;
 }
 
-function convertPath(path) {
-  if (path.slice(0,7) === "http://") {
-    path = "https://" + path.slice(7,-1);
-    return path;
-  } else if (path.slice(0,8) !== "https://" ) {
-    path = "https://" + path;
-    return path;
-  }
+function convertPath(input) {
+  let re = /([^https?:\/\/].*\.(?:[a-z]{0,4}$))/i;
+  let result = re.exec(input);
+  let path = result ? 'https://' + result[0]: 'invalid path';
+  return path;
 }
